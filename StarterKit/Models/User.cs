@@ -37,7 +37,7 @@ namespace StarterKit.Models
         [DataType(DataType.DateTime)]
         public DateTime? LastLoginAt { get; set; } = null;
 
-        public UserStatusEnum status { get; set; } = UserStatusEnum.Inactive;
+        public UserStatusEnum Status { get; set; } = UserStatusEnum.Inactive;
 
         public bool IsEmailVerified { get; set; } = false;
 
@@ -46,5 +46,12 @@ namespace StarterKit.Models
 
         [DataType(DataType.DateTime)]
         public DateTime? UpdatedAt { get; set; } = null;
+    }
+
+    public class UserDtoResponse
+    {
+        public int Id { get; set; }
+        public string Username { get; set; } = "";
+        public UserRoleEnum Role { get; set; } = UserRoleEnum.User;
     }
 }

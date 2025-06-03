@@ -16,7 +16,7 @@ namespace StarterKit.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] User dto)
         {
-            var user = new User
+            User user = new()
             {
                 Username = dto.Username,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.PasswordHash)
@@ -30,12 +30,24 @@ namespace StarterKit.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] User dto)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(x => x.Username == dto.Username);
+            User? user = await _context.Users.SingleOrDefaultAsync(x => x.Username == dto.Username);
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.PasswordHash, user.PasswordHash))
                 return Unauthorized();
 
-            var token = _jwtService.GenerateToken(user);
-            return Ok(new { token });
+            user.LastLoginAt = DateTime.UtcNow;
+            user.UpdatedAt = DateTime.UtcNow;
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            UserDtoResponse userDtoResponse = new()
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Role = user.Role
+            };
+
+            string token = _jwtService.GenerateToken(user);
+            return Ok(new { token, user = userDtoResponse });
         }
     }
 
