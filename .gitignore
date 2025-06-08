@@ -39,3 +39,10 @@ msbuild.wrn
 **/*.db
 **/*.db-shm
 **/*.db-wal
+
+**/*.tmp
+
+**/*.pdf
+**/*.docx
+**/*.xlsx
+**/*.png

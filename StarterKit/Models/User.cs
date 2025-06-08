@@ -30,7 +30,7 @@ namespace StarterKit.Models
         public int? ProfileImageId { get; set; } = null;
 
         [ForeignKey("ProfileImageId")]
-        public virtual ProfileImage? ProfileImage { get; set; } = null;
+        public virtual UploadFile? ProfileImage { get; set; } = null;
 
         public UserRoleEnum Role { get; set; } = UserRoleEnum.User;
 

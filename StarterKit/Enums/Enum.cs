@@ -14,12 +14,14 @@
             Inactive,
             Banned
         }
-        public enum ImageFormatEnum
+        public enum FormatEnum
         {
             Png,
             Jpeg,
             Gif,
-            Webp
+            Webp,
+            Pdf,
+            Unknown
         }
         public enum LogLevelEnum
         {
