@@ -24,7 +24,7 @@ namespace StarterKit.Models
         public string ContentType { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(50, ErrorMessage = "Image format cannot be longer than 50 characters.")]
+        [StringLength(50, ErrorMessage = "File format cannot be longer than 50 characters.")]
         public FormatEnum Format { get; set; } = FormatEnum.Png;
 
         [Required]
