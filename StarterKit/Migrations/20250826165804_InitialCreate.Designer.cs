@@ -11,7 +11,7 @@ using StarterKit.Data;
 namespace StarterKit.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250603165929_InitialCreate")]
+    [Migration("20250826165804_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,33 +20,43 @@ namespace StarterKit.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.5");
 
-            modelBuilder.Entity("StarterKit.Models.ProfileImage", b =>
+            modelBuilder.Entity("StarterKit.Models.UploadFile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasMaxLength(255)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("Format")
                         .HasMaxLength(50)
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Size")
+                    b.Property<long>("Size")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
-                    b.ToTable("ProfileImages");
+                    b.ToTable("UploadedFiles");
                 });
 
             modelBuilder.Entity("StarterKit.Models.User", b =>
@@ -66,6 +76,9 @@ namespace StarterKit.Migrations
                     b.Property<bool>("IsEmailVerified")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsPrivate")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime?>("LastLoginAt")
                         .HasColumnType("TEXT");
 
@@ -80,6 +93,9 @@ namespace StarterKit.Migrations
                     b.Property<int>("Role")
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("TEXT");
 
@@ -87,9 +103,6 @@ namespace StarterKit.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("status")
-                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -100,7 +113,7 @@ namespace StarterKit.Migrations
 
             modelBuilder.Entity("StarterKit.Models.User", b =>
                 {
-                    b.HasOne("StarterKit.Models.ProfileImage", "ProfileImage")
+                    b.HasOne("StarterKit.Models.UploadFile", "ProfileImage")
                         .WithMany()
                         .HasForeignKey("ProfileImageId");
 

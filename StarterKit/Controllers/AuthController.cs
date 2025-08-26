@@ -1,54 +1,44 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using StarterKit.Data;
 using StarterKit.Models;
 using StarterKit.Services;
 
-namespace StarterKit.Controllers
+namespace StarterKit.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class AuthController(AppDbContext context, IUserService userService) : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class AuthController(AppDbContext context, JwtService jwtService) : ControllerBase
+    private readonly AppDbContext _context = context;
+    private readonly IUserService _userService = userService;
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] UserDtoRequestRegister user)
     {
-        private readonly AppDbContext _context = context;
-        private readonly JwtService _jwtService = jwtService;
-
-        [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] User dto)
+        try
         {
-            User user = new()
-            {
-                Username = dto.Username,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.PasswordHash)
-            };
-
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
-            return Ok();
+            await _userService.RegisterAsync(user);
+            return Ok(new { message = "User registered successfully." });
         }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] User dto)
+        catch (Exception ex)
         {
-            User? user = await _context.Users.SingleOrDefaultAsync(x => x.Username == dto.Username);
-            if (user == null || !BCrypt.Net.BCrypt.Verify(dto.PasswordHash, user.PasswordHash))
-                return Unauthorized();
-
-            user.LastLoginAt = DateTime.UtcNow;
-            user.UpdatedAt = DateTime.UtcNow;
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync();
-
-            UserDtoResponse userDtoResponse = new()
-            {
-                Id = user.Id,
-                Username = user.Username,
-                Role = user.Role
-            };
-
-            string token = _jwtService.GenerateToken(user);
-            return Ok(new { token, user = userDtoResponse });
+            return BadRequest(new { message = ex.Message });
         }
     }
 
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] UserDtoRequestLogin user)
+    {
+        try
+        {
+            var (token, userDto) = await _userService.LoginAsync(user.UsernameOrEmail, user.Password);
+            return Ok(new { token, user = userDto });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+
+        }
+    }
 }

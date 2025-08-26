@@ -73,6 +73,9 @@ namespace StarterKit.Migrations
                     b.Property<bool>("IsEmailVerified")
                         .HasColumnType("INTEGER");
 
+                    b.Property<bool>("IsPrivate")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime?>("LastLoginAt")
                         .HasColumnType("TEXT");
 
